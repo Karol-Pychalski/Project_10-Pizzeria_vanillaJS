@@ -109,8 +109,8 @@
       console.log(thisProduct);
 
       /* find the clickable trigger (the element that should react to clicking) */
-      const accordionTrigger = document.querySelector(select.menuProduct.clickable); //?  element.select.menuProduct.clickable('.product__header');
-      console.log('clickable trigger:', accordionTrigger);
+      //const accordionTrigger = thisProduct.accordionTrigger(select.menuProduct.clickable); //?  element.select.menuProduct.clickable('.product__header');
+      //console.log('clickable trigger:', accordionTrigger);
 
       //const accordionContent = documment.querySelectorAll('.product__wrapper')
  
@@ -118,6 +118,18 @@
       //const createAccordion = document.getElementsByClassName('product_header');
       
       
+      thisProduct.accordionTrigger.addEventListener('click',function(){
+        const allProducts = document.querySelectorAll('product');
+  
+        allProducts.forEach(function(Element){
+          product.classList.remove('active');
+        });
+
+        thisProduct.element.classList.toggle('active');
+
+      });
+
+
       /*---------------------------------sposób 1 -----------------------------------*/
       //const i;
 
@@ -194,60 +206,60 @@
       const formData = utils.serializeFormToObject(thisProduct.form);       //daje dostęp do formularza w postaci JS-owego obiektu
       console.log('formData', formData);
  
-      // //set price to default price (w tej zmiennej przechowywana jest początkowa cena - zmieniana wraz ze sprawdzaniem kolejnych opcji)
-      // let price = thisProduct.data.price;
+      //set price to default price (w tej zmiennej przechowywana jest początkowa cena - zmieniana wraz ze sprawdzaniem kolejnych opcji)
+      let price = thisProduct.data.price;
  
-      // //for every category (param) - pętla dla wszystkich kategorii z data.js (breakfast, pizza itp)
-      //     for (let paramId in thisProduct.data.params) {
+      //for every category (param) - pętla dla wszystkich kategorii z data.js (breakfast, pizza itp)
+          for (let paramId in thisProduct.data.params) {
 
-      //   // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
-      //   const param = thisProduct.data.params[paramId];     //ta zmienna daje dostęp do całego obiektu (nie tylko do nazwy właściwości)
-      //   console.log(paramId, param);
+        // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
+        const param = thisProduct.data.params[paramId];     //ta zmienna daje dostęp do całego obiektu (nie tylko do nazwy właściwości)
+        console.log(paramId, param);
  
-      //   // for every option in this category - pętla dla wszystkich opcji w każdej z kategorii z data.js
-      //   for (let optionId in param.options) {
-      //     // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
-      //     const option = param.options[optionId];          //ta zmienna daje dostęp do całego obiektu (nie tylko do nazwy właściwości)
-      //     console.log(optionId, option);
+        // for every option in this category - pętla dla wszystkich opcji w każdej z kategorii z data.js
+        for (let optionId in param.options) {
+          // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+          const option = param.options[optionId];          //ta zmienna daje dostęp do całego obiektu (nie tylko do nazwy właściwości)
+          console.log(optionId, option);
  
-      //     //sprawdź czy dana opcja (optionId) danej kategorii (paramId) jest wybrana w formularzu (formData) - to jest mój problem
-      //     //spawdzam czy formData zwierający kategorię (paramId) posiada wybraną opcję (optionId) - konstrukcja odpowiedzi an problem
-      //     //check if there is param with a name of paramId in formData and if it includes optionId
+          //sprawdź czy dana opcja (optionId) danej kategorii (paramId) jest wybrana w formularzu (formData) - to jest mój problem
+          //spawdzam czy formData zwierający kategorię (paramId) posiada wybraną opcję (optionId) - konstrukcja odpowiedzi an problem
+          //check if there is param with a name of paramId in formData and if it includes optionId
 
  
-      //     if (formData[paramId] && formData[paramId].includes(optionId)) {
-      //       //check if the option is not default
-      //       if (!option.default) {
-      //         //add option price to price variable
+          if (formData[paramId] && formData[paramId].includes(optionId)) {
+            //check if the option is not default
+            if (!option.default) {
+              //add option price to price variable
  
-      //       }
-      //     } else {
-      //       //check if the option is default
-      //       // if(???) {
-      //       //   //reduce price variable
-      //       // }
-      //     }
+            }
+          } else {
+            //check if the option is default
+            // if(???) {
+            //   //reduce price variable
+            // }
+          }
  
-      //     //find a correct image to class .paramId-optionId in div with images (s.61)
-      //     const optionImage = thisProduct.imageWrapper.querySelector('.paramId-optionId');
-      //     if (optionImage) {
-      //       //co tu ma być?
-      //     }
+          //find a correct image to class .paramId-optionId in div with images (s.61)
+          const optionImage = thisProduct.imageWrapper.querySelectorAll('.paramId-optionId');
+          if (optionImage) {
+            //co tu ma być?
+          }
  
-      //     //check if an option is selected (if yes - show a proper image, if not - hide image)
+          //check if an option is selected (if yes - show a proper image, if not - hide image)
  
  
-      //     //add or remove class active form image
-      //     for (let activeClass of optionImage) {
-      //       activeClass.classList.add(classNames.menuProduct.imageVisible);
-      //     }
+          //add or remove class active form image
+          for (let activeClass of optionImage) {
+            activeClass.classList.add(classNames.menuProduct.imageVisible);
+          }
  
-      //   }
+        }
  
-      //   //update calculated price in the HTML (wpisanie przeliczonej ceny do elementu w HTML)
-      //   thisProduct.priceElem.innerHTML = price;
+        //update calculated price in the HTML (wpisanie przeliczonej ceny do elementu w HTML)
+        thisProduct.priceElem.innerHTML = price;
  
-      // }
+      }
  
     }
  
@@ -258,7 +270,7 @@
       const thisApp = this;                    //zadanie tej metody: przejście po wszystkich obiektach produktów i utworzenie dla każdego z nich instancji klasy Product [s.41]
       console.log('thisApp.data:', thisApp.data);
  
-      for(let productData in thisApp.data.products){
+      for(let productData in thisApp.data.products){                    //pętla wykonuje wszystkie akcje z getEleent dla każdego produktu z menu (powtarza to wszystko dla każdego produktu)
         new Product(productData, thisApp.data.products[productData]);   //nowa instancja z 2 argumentami
       }
     },
