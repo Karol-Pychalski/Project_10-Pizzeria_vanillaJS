@@ -54,7 +54,7 @@
  
   class Product {
     constructor(id, data) {                           //constructor to funkcja?
-      const thisProduct = this;                      //aby jakaś metoda uruchamiała się przy utworzeniu instancji, to trzeba ją wywołać w konstruktorze
+      const thisProduct = this;                       //aby jakaś metoda uruchamiała się przy utworzeniu instancji, to trzeba ją wywołać w konstruktorze
       thisProduct.id = id;
       thisProduct.data = data;
  
@@ -69,6 +69,9 @@
  
       thisProduct.initOrderForm();
       console.log('initOrderForm:', thisProduct);
+
+      thisProduct.initAmountWidget();
+      console.log('initAmountWidget:', thisProduct);
  
       thisProduct.processOrder();
       console.log('processOrder:', thisProduct);
@@ -96,87 +99,33 @@
     getElements() {                    //metoda z referencjami dostępnymi dla wszystkich innych metod
       const thisProduct = this;
       thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
-      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);        //element to węzeł elementu?
-      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);    //form to węzeł atrybutu?
+      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);        //element to węzeł elementu
+      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);    //form to węzeł atrybutu
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);  //?? (dodane z 7.7) [s.59]
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
     }
  
  
     initAccordion() {
       const thisProduct = this;
       console.log(thisProduct);
-
-      /* find the clickable trigger (the element that should react to clicking) */
-      //const accordionTrigger = thisProduct.accordionTrigger(select.menuProduct.clickable); //?  element.select.menuProduct.clickable('.product__header');
-      //console.log('clickable trigger:', accordionTrigger);
-
-      //const accordionContent = documment.querySelectorAll('.product__wrapper')
- 
-      /* START: add event listener to clickable trigger on event click */
-      //const createAccordion = document.getElementsByClassName('product_header');
       
-      
-      thisProduct.accordionTrigger.addEventListener('click',function(){
+      thisProduct.accordionTrigger.addEventListener('click',function(){   //czy w nawiasie ma być event?
         const allProducts = document.querySelectorAll('product');
   
-        allProducts.forEach(function(Element){
+        allProducts.forEach(function(element){        //czy (Element) ?
           product.classList.remove('active');
         });
 
         thisProduct.element.classList.toggle('active');
 
       });
-
-
-      /*---------------------------------sposób 1 -----------------------------------*/
-      //const i;
-
-      //for (i = 0; i < createAccordion; i++) {
-      // accordionTrigger.addEventListener('click', function(event) { //było: clickableTrigger.addEventListener('click', function(event){ -> zmiana w 7.6
-      //   thisProduct.classList.toggle('active');
-      //   const product_name = thisProduct.nextElementSibling;
-      //   if (product_name.style.display === 'block') {
-      //     product_name.style.display = 'none';
-      //   } else {
-      //     product_name.style.display = 'block';
-      //   }
-      //   /* prevent default action for event */
-      //   event.preventDefault();
-      //   const clickedElement = this;      // czy to tu ma być?
-        
-      // });
-      // //}
     }
  
+    
 
-    /*--------------------------------------------------------------------------------*/
- 
-    /* find active product (product that has active class) */
-    //const activeProduct = document.querySelector(select.menuProduct.wrapperActive);   //było ('active')
-    //console.log('product with active class:', activeProduct);
-
-    /*-------------------------------- sposób 2---------------------------------------*/
-    //const createAccordion = document.getElementsByClassName("product_header");
-    //const i;
-
- 
-    /* if there is active product and it's not thisProduct.element, remove class active from it */
-    //const removeActive = thisProduct.element.remove(classNames.menuProduct.wrapperActive);
-    //const removeActive = thisProduct.element.add(classNames.menuProduct.wrapperActive).siblings.remove(classNames.menuProduct.wrapperActive);
-    //thisProduct.classList.add('active').siblings.remove('active');
-    //console.log('remove active class from active product:');
- 
-    /* toggle active class on thisProduct.element */
-    //clickedElement.classList.toggle('active');      //z tym kodem dodaje się klasa active do klikniętego nagłówka - czy mimo to jest on dobry?
-    //thisProduct.element.toggle(select.menuProduct.clickable);
-    //thisProduct.element.toggle(classNames.menuProduct.wrapperActive);    -> s.44
-
-      
-        
-      
- 
     initOrderForm() {
       const thisProduct = this;
       console.log('initOrderForm:', thisProduct);
@@ -210,7 +159,7 @@
       let price = thisProduct.data.price;
  
       //for every category (param) - pętla dla wszystkich kategorii z data.js (breakfast, pizza itp)
-          for (let paramId in thisProduct.data.params) {
+      for (let paramId in thisProduct.data.params) {
 
         // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
         const param = thisProduct.data.params[paramId];     //ta zmienna daje dostęp do całego obiektu (nie tylko do nazwy właściwości)
@@ -231,7 +180,7 @@
             //check if the option is not default
             if (!option.default) {
               //add option price to price variable
- 
+              option.add(thisProduct.priceElem);
             }
           } else {
             //check if the option is default
@@ -253,17 +202,66 @@
           for (let activeClass of optionImage) {
             activeClass.classList.add(classNames.menuProduct.imageVisible);
           }
- 
         }
  
         //update calculated price in the HTML (wpisanie przeliczonej ceny do elementu w HTML)
         thisProduct.priceElem.innerHTML = price;
  
       }
- 
     }
- 
+
+    initAmountWidget(){
+      const thisProduct = this;
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+
+    }
   }
+
+
+  class AmountWidget{
+    constructor(element){
+      const thisWidget = this;
+
+      thisWidget.getElements(element);
+      console.log('getElements:', element);
+
+      thisWidget.setValue(thisWidget.input.value);
+      console.log('setValue:', thisWidget);           //?? czy tu dobrze wywoałem widget?
+
+
+      console.log('AmountWidget:', thisWidget);
+      console.log('constructor arguments', element);
+    }
+
+    getElements(){
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+
+
+    setValue(value){
+      const thisWidget = this;
+      const newValue = parseInt(value);
+
+      /*TODO: add validation*/
+      if(thisWidget.value !== newValue) {
+        thisWidget.value = newValue;
+      }
+
+      if(thisWidget.value !== newValue && !isNaN(newValue)){
+        thisWidget.value = newValue;
+      }
+
+      thisWidget.value = newValue;
+      thisWidget.input.value = thisWidget;
+    }
+  }
+
+  
  
   const app = {
     initMenu: function(){                      //metoda app.initMenu wywoływana po app.initData (korzysta z przygotowanej wcześniej referencji do danych -> thisApp.data)
