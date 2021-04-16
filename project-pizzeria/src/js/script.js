@@ -125,7 +125,6 @@
     }
  
     
-
     initOrderForm() {
       const thisProduct = this;
       console.log('initOrderForm:', thisProduct);
@@ -146,6 +145,7 @@
         thisProduct.processOrder();
       });
     }
+
  
     processOrder() {
       const thisProduct = this;
@@ -201,7 +201,8 @@
         }
  
         //update calculated price in the HTML (wpisanie przeliczonej ceny do elementu w HTML)
-        thisProduct.priceElem.innerHTML = price;
+        price *= thisProduct.amountWidget.value;        //pomnożenie ceny przez ilość sztuk
+        thisProduct.priceElem.innerHTML = price;        //wyświetlenie finałowej ceny (suma = wybrane dodatki i ilość sztuk)
  
       }
     }
@@ -210,6 +211,9 @@
       const thisProduct = this;
       thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
 
+      thisProduct.amountWidgetElem.addEventListener('updated', function() {     //na tym elemencie (thisProduct.amountWidgetElem) emitujemy event, dlatego tu jest nasłuchiwanie. Funkcja uruchamia poniższą metodę
+        thisProduct.processOrder();
+      });
     }
   }
 
@@ -222,7 +226,7 @@
       console.log('getElements:', element);
 
       thisWidget.setValue(thisWidget.input.value);
-      console.log('setValue:', thisWidget);           //?? czy tu dobrze wywoałem widget?
+      console.log('setValue:', thisWidget);           //?? czy tu dobrze wywołałem widget?
 
       thisWidget.setListeners();
       console.log('AmountWidget:', thisWidget);
@@ -248,10 +252,13 @@
 
       if(thisWidget.value !== newValue && !isNaN(newValue)){
         thisWidget.value = newValue;
+        //this.announce();                  //czy to jest właściwe miejsce i konstrukcja?
+        //thisWidget.announce();            //czy to jest właściwe miejsce i konstrukcja?
       }
 
       thisWidget.value = newValue;
       thisWidget.input.value = newValue;
+      thisWidget.announce();                //czy to jest poprawna konstrukcja wywołania i właściwe miejsce?
     }
 
     setListeners(){
@@ -293,7 +300,12 @@
 
       //dodać walidację wprowadzanej liczby w input (zakres)
 
-      
+    }
+
+    announce(){
+      const thisWidget = this;
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
     }
   }
 
