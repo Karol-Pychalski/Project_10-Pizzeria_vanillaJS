@@ -36,6 +36,19 @@ utils.serializeFormToObject = function(form){
   return output;
 };
 
+//walidacja wprowadzanej liczby (i ewentualnego tesktu) w pole 'input'
+utils.validateQuantityInput = function(value, oldValue){
+  const minQuantity = 1;
+  const maxQuantity = 9;
+  const newValue = parseInt(value);
+
+  if (newValue <= maxQuantity && newValue >= minQuantity) {
+    return newValue;
+  }
+
+  return oldValue;
+};
+
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });

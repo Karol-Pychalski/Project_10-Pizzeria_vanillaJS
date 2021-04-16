@@ -113,9 +113,9 @@
       console.log(thisProduct);
       
       thisProduct.accordionTrigger.addEventListener('click',function(){   //czy w nawiasie ma być event?
-        const allProducts = document.querySelectorAll('product');
+        const allProducts = document.querySelectorAll('.product');
   
-        allProducts.forEach(function(element){        //czy (Element) ?
+        allProducts.forEach(function(product){        //czy (element) ?
           product.classList.remove('active');
         });
 
@@ -153,7 +153,7 @@
  
       //covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
       const formData = utils.serializeFormToObject(thisProduct.form);       //daje dostęp do formularza w postaci JS-owego obiektu
-      console.log('formData', formData);
+      console.log('formData:', formData);
  
       //set price to default price (w tej zmiennej przechowywana jest początkowa cena - zmieniana wraz ze sprawdzaniem kolejnych opcji)
       let price = thisProduct.data.price;
@@ -174,34 +174,30 @@
           //sprawdź czy dana opcja (optionId) danej kategorii (paramId) jest wybrana w formularzu (formData) - to jest mój problem
           //spawdzam czy formData zwierający kategorię (paramId) posiada wybraną opcję (optionId) - konstrukcja odpowiedzi an problem
           //check if there is param with a name of paramId in formData and if it includes optionId
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);   //ten krok weryfikuje czy są zaznaczone opcje w formularzu (bez default)
+          
+          //check if the option is not default
+          if (optionSelected && !option.default) {      
+            //add option price to price variable (zwiększyć cenę produktu)
+            price += option.price;
+            //thisProduct.priceElem.add(paramId.option.price);
 
- 
-          if (formData[paramId] && formData[paramId].includes(optionId)) {
-            //check if the option is not default
-            if (!option.default) {
-              //add option price to price variable
-              option.add(thisProduct.priceElem);
-            }
-          } else {
-            //check if the option is default
-            // if(???) {
-            //   //reduce price variable
+          } else if (option.default && !optionSelected){
+            //reduce price variable (zmniejszyć cenę produktu)
+            price -= option.price;
             // }
           }
  
           //find a correct image to class .paramId-optionId in div with images (s.61)
-          const optionImage = thisProduct.imageWrapper.querySelectorAll('.paramId-optionId');
-          if (optionImage) {
-            //co tu ma być?
-          }
+          const optionImages = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
+          // if (optionImage) {
+          //co tu ma być?
  
           //check if an option is selected (if yes - show a proper image, if not - hide image)
  
  
           //add or remove class active form image
-          for (let activeClass of optionImage) {
-            activeClass.classList.add(classNames.menuProduct.imageVisible);
-          }
+          
         }
  
         //update calculated price in the HTML (wpisanie przeliczonej ceny do elementu w HTML)
@@ -228,12 +224,12 @@
       thisWidget.setValue(thisWidget.input.value);
       console.log('setValue:', thisWidget);           //?? czy tu dobrze wywoałem widget?
 
-
+      thisWidget.setListeners();
       console.log('AmountWidget:', thisWidget);
       console.log('constructor arguments', element);
     }
 
-    getElements(){
+    getElements(element){
       const thisWidget = this;
 
       thisWidget.element = element;
@@ -245,23 +241,63 @@
 
     setValue(value){
       const thisWidget = this;
-      const newValue = parseInt(value);
+      //const newValue = parseInt(value);
+      const newValue = utils.validateQuantityInput(value, thisWidget.value);
 
       /*TODO: add validation*/
-      if(thisWidget.value !== newValue) {
-        thisWidget.value = newValue;
-      }
 
       if(thisWidget.value !== newValue && !isNaN(newValue)){
         thisWidget.value = newValue;
       }
 
       thisWidget.value = newValue;
-      thisWidget.input.value = thisWidget;
+      thisWidget.input.value = newValue;
+    }
+
+    setListeners(){
+      const thisWidget = this;
+
+      thisWidget.linkIncrease.addEventListener('click', function(){
+        thisWidget.setValue(thisWidget.value + 1);
+      });
+
+      /* inny sposób na zakodowanie powyższej linijki:
+      thisWidget.linkIncrease.addEventListener('click', function()
+        const currentValue = thisWidget.value;
+        const newValue = currentValue + 1;
+        thisWidget.setValue(newValue);
+      */
+
+      /*inna możliwość dodania ograniczenia do 9 zamiast w functions.js:
+        if(newValue <= 9){
+          thisWidget.setValue(newValue);
+          }
+      */
+
+      //dodać ograniczenie =>1
+
+      thisWidget.linkDecrease.addEventListener('click', function(){
+        thisWidget.setValue(thisWidget.value - 1);
+      });
+
+      
+      thisWidget.input.addEventListener('input', function(event){
+        thisWidget.setValue(event.currentTarget.value);
+      });
+
+      /* inny sposób na zakodowanie powyższej linijki:
+      thisWidget.input.addEventListener('input', function(event)
+        const newValue = event.currentTarget.value;
+        thisWidget.setValue(newValue);
+      */
+
+      //dodać walidację wprowadzanej liczby w input (zakres)
+
+      
     }
   }
 
-  
+
  
   const app = {
     initMenu: function(){                      //metoda app.initMenu wywoływana po app.initData (korzysta z przygotowanej wcześniej referencji do danych -> thisApp.data)
