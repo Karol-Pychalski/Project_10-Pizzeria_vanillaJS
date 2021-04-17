@@ -6,6 +6,7 @@
   const select = {                                  //obiekt
     templateOf: {                                   //drugi obiekt
       menuProduct: '#template-menu-product',        //właściwość i selektor
+      cartProduct: '#template-cart-product',
     },
     containerOf: {
       menu: '#product-list',
@@ -26,10 +27,28 @@
     },
     widgets: {
       amount: {
-        input: 'input[name="amount"]',
+        input: 'input.amount',
         linkDecrease: 'a[href="#less"]',
         linkIncrease: 'a[href="#more"]',
       },
+    },
+    cart: {
+      productList: '.cart__order-summary',
+      toggleTrigger: '.cart__summary',
+      totalNumber: `.cart__total-number`,
+      totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
+      subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
+      deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
+      form: '.cart__order',
+      formSubmit: '.cart__order [type="submit"]',
+      phone: '[name="phone"]',
+      address: '[name="address"]',
+    },
+    cartProduct: {
+      amountWidget: '.widget-amount',
+      price: '.cart__product-price',
+      edit: '[href="#edit"]',
+      remove: '[href="#remove"]',
     },
   };
  
@@ -38,6 +57,9 @@
       wrapperActive: 'active',
       imageVisible: 'active',
     },
+    cart: {
+      wrapperActive: 'active',
+    },
   };
  
   const settings = {
@@ -45,11 +67,15 @@
       defaultValue: 1,
       defaultMin: 1,
       defaultMax: 9,
-    }
+    },
+    cart: {
+      defaultDeliveryFee: 20,
+    },
   };
  
   const templates = {
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
+    cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
   };
  
   class Product {
@@ -189,7 +215,7 @@
           }
  
           //find a correct image to class .paramId-optionId in div with images (s.61)
-          const optionImages = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
+          //const optionImages = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
           // if (optionImage) {
           //co tu ma być?
  
@@ -309,6 +335,34 @@
     }
   }
 
+  class Cart {
+    constructor(element){
+      const thisCart = this;
+
+      thisCart.products = [];           //tu będą przechowywane produkty dodane do koszyka
+      thisCart.getElements(element);
+      thisCart.initActions();
+
+      console.log('new Cart', thisCart);
+    }
+
+    getElements(element){
+      const thisCart = this;
+      thisCart.dom = {};
+      thisCart.dom.wrapper = element;
+
+      thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+    }
+
+    initActions() {
+      const thisCart = this;
+
+      thisCart.dom.toggleTrigger.addEventListener('click', function() {
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);     //hanlder tego listenera toggluje klasę zapisaną w classNames.cart.wrapperActive
+      });
+      
+    }
+  }
 
  
   const app = {
@@ -326,6 +380,12 @@
  
       thisApp.data = dataSource;              //przypisanie referencji do dataSource (znajduje się tam obiekt Products ze strukturą produktów)
     },
+
+    initCart: function(){
+      const thisApp = this;
+      const cartElem = document.querySelector(select.containerOf.cart);
+      thisApp.cart = new Cart(cartElem);      //instancja klasy Cart
+    },
  
     init: function(){                         //to jest metoda: app.init
       const thisApp = this;
@@ -337,6 +397,7 @@
  
       thisApp.initData();                    //wywołanie metody initData
       thisApp.initMenu();                    //wywołanie metody initMenu
+      thisApp.initCart();
     },
   };
  
