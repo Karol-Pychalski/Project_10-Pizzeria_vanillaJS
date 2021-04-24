@@ -1,6 +1,6 @@
-import {select, classNames, templates, settings} from './settings.js';
-import utils from './utils.js';
-import AmountWidget from './components/AmountWidget.js';
+import {select, classNames, templates, settings} from '../settings.js';
+import utils from '../utils.js';
+import AmountWidget from './AmountWidget.js';
 
 
 class Product {
@@ -123,6 +123,8 @@ class Product {
         const option = param.options[optionId];          //ta zmienna daje dostęp do całego obiektu (nie tylko do nazwy właściwości)
         console.log(optionId, option);
  
+        const optionImage = thisProduct.imageWrapper.querySelector('.' + paramId + '-' + optionId);
+
         //sprawdź czy dana opcja (optionId) danej kategorii (paramId) jest wybrana w formularzu (formData) - to jest mój problem
         //spawdzam czy formData zwierający kategorię (paramId) posiada wybraną opcję (optionId) - konstrukcja odpowiedzi an problem
         //check if there is param with a name of paramId in formData and if it includes optionId
@@ -139,6 +141,14 @@ class Product {
           price -= option.price;
           // }
         }
+
+        if (optionImage) {
+          if (optionSelected) {
+            optionImage.classList.add(classNames.menuProduct.imageVisible);
+          } else if (!optionSelected) {
+            optionImage.classList.remove (classNames.menuProduct.imageVisible);
+          }
+        }
  
         //find a correct image to class .paramId-optionId in div with images (s.61)
         //const optionImages = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
@@ -151,18 +161,18 @@ class Product {
         //add or remove class active form image
           
       }
- 
-      //update calculated price in the HTML (wpisanie przeliczonej ceny do elementu w HTML)
-      price *= thisProduct.amountWidget.value;        //pomnożenie ceny przez ilość sztuk
-      //thisProduct.price = thisProduct.priceSingle * thisProduct.amountWidget.value;  ??
-      thisProduct.priceSingle = price;
-      thisProduct.priceElem.innerHTML = price;        //wyświetlenie finałowej ceny (suma = wybrane dodatki i ilość sztuk)
- 
     }
+
+        //update calculated price in the HTML (wpisanie przeliczonej ceny do elementu w HTML)
+        price *= thisProduct.amountWidget.value;        //pomnożenie ceny przez ilość sztuk
+        //thisProduct.price = thisProduct.priceSingle * thisProduct.amountWidget.value;  ??
+        thisProduct.priceSingle = price;
+        thisProduct.priceElem.innerHTML = price;        //wyświetlenie finałowej ceny (suma = wybrane dodatki i ilość sztuk)
   }
 
   initAmountWidget(){
     const thisProduct = this;
+    debugger;
     thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
 
     thisProduct.amountWidgetElem.addEventListener('updated', function() {     //na tym elemencie (thisProduct.amountWidgetElem) emitujemy event, dlatego tu jest nasłuchiwanie. Funkcja uruchamia poniższą metodę

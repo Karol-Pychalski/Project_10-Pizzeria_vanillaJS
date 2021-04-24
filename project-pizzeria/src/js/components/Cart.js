@@ -1,5 +1,5 @@
-import {settings, select, classNames, templates} from './settings.js';
-import {utils} from './utils.js';
+import {settings, select, classNames, templates} from '../settings.js';
+import utils from '../utils.js';
 import CartProduct from './CartProduct.js';
 
 class Cart {
@@ -19,7 +19,7 @@ class Cart {
     thisCart.dom.wrapper = element;
 
     thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
-    //thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.)
+    thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
     thisCart.dom.deliveryFee = thisCart.dom.wrapper.querySelector(select.cart.deliveryFee);
     thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
     thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelector(select.cart.totalPrice);
@@ -66,7 +66,7 @@ class Cart {
     // /* add element to menu */
     // menuContainer.appendChild(thisProduct.element);
 
-    thisCart.products.push(new cartProduct(menuProduct, generateDOM));                  //ta i kolejna linia dodane z początku 8.5 (+ późniejsze zmiany: stworzenie nowej instancji klasy new CartProduct i dodanie jej do tablicy thisCart.products
+    thisCart.products.push(new CartProduct(menuProduct, generatedDOM));                  //ta i kolejna linia dodane z początku 8.5 (+ późniejsze zmiany: stworzenie nowej instancji klasy new CartProduct i dodanie jej do tablicy thisCart.products
     console.log('thisCart.products', thisCart.products);
 
     thisCart.update();
@@ -75,9 +75,9 @@ class Cart {
   update() {
     const thisCart = this;
 
-    const deliveryFee = settings.cart.defaultDeliveryFee;
-    const totalNumber = 0;
-    const subtotalPrice = 0;
+    thisCart.deliveryFee = settings.cart.defaultDeliveryFee;  //było jako const deliveryFee
+    thisCart.totalNumber = 0;
+    thisCart.subtotalPrice = 0;
 
     for (let product of thisCart.products) {
       thisCart.totalNumber += product.amount;
@@ -91,9 +91,10 @@ class Cart {
     console.log('totalPrice: ', thisCart.totalPrice);
 
     //czy ta pętla będzie działać? (odnosi się do tablicy z getElements w tej klasie)
-    for (let sum of thisCart.totalSumUpdate) {
-      for (let elem of thisCart.dom[sum]) {
-        elem.innerHTML = thisCart[sum];
+    debugger;
+    for (let sum of thisCart.totalSumUpdate) {    //sprawdzić dlaczego nie ma pozostałych elementów w thisCart + nie można iterować po obiekcie w ten sposób - potrzebowałbym tablicę danych elementów html
+      for (let elem of thisCart.dom[sum]) {   //klucze: deliveryFee, subTotalPrice, totalPrice, totalNumber itp. - identyfikatory się zgadzają, ale klucze do których się odwołuję już nie są zgodne
+        elem.innerHTML = thisCart[sum];     //tu aktualizauję elementy z DOM wartościami thisCart - jak to zrobić inaczej aby zninął błąd
       }
     }
   }

@@ -1,4 +1,5 @@
-import {settings, select} from './settings.js';
+import {select} from '../settings.js';
+import utils from '../utils.js';
 
 class AmountWidget{
   constructor(element){
