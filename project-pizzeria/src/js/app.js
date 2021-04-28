@@ -1,66 +1,124 @@
-import {settings, select, classNames, templates} from './settings.js';
+import { settings, select, classNames } from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
- 
-  const app = {
-    initMenu: function(){                      //metoda app.initMenu wywoływana po app.initData (korzysta z przygotowanej wcześniej referencji do danych -> thisApp.data)
-      const thisApp = this;                    //zadanie tej metody: przejście po wszystkich obiektach produktów i utworzenie dla każdego z nich instancji klasy Product [s.41]
-      console.log('thisApp.data:', thisApp.data);
- 
-      for(let productData in thisApp.data.products){                    //pętla wykonuje wszystkie akcje z getEleent dla każdego produktu z menu (powtarza to wszystko dla każdego produktu)
-        new Product(productData, thisApp.data.products[productData]);   //nowa instancja z 2 argumentami
+import Booking from './components/Booking.js';
+import Home from './components/Home.js';
+
+const app = {
+  initPages: function () {
+    const thisApp = this;
+
+    thisApp.pages = document.querySelector(select.containerOf.pages).children;
+    thisApp.navLinks = document.querySelectorAll(select.nav.links);
+
+    const idFromHash = window.location.hash.replace('#/', '');
+
+    let pageMatchingHash = thisApp.pages[0].id;
+    for (let page of thisApp.pages) {
+      if (page.id == idFromHash) {
+        pageMatchingHash = page.id;
+        break;
       }
-    },
- 
-    initData: function(){                     //metoda app.initData (zadanie: przygotowanie łatwego dostępu do danych [s.41]
-      const thisApp = this;
- 
-      thisApp.data = {};              //było = dataSource; przypisanie referencji do dataSource (znajduje się tam obiekt Products ze strukturą produktów)
+    }
 
-      const url = settings.db.url + '/' + settings.db.product;
+    thisApp.activatePage(pageMatchingHash);
 
-      fetch(url)
-        .then(function(rawResponse){ 
-          return rawResponse.json();
-        })
-        .then(function(parsedResponse){
-            console.log('parsedResponse', parsedResponse);
+    for (let link of thisApp.navLinks) {
+      link.addEventListener('click', function (event) {
+        const clickedElement = this;
+        event.preventDefault();
 
-            /*save parsedResponse as thisApp.data.products*/
-            thisApp.data.products = parsedResponse;
+        const id = clickedElement.getAttribute('href').replace('#', '');
 
-            /* execute initMenu method */
-            thisApp.initMenu();
-        });
+        //run thisApp.activatedPage with that id
+        thisApp.activatePage(id);
 
-      console.log('thisApp.data', JSON.stringify(thisApp.data));
-    },
+        //change URL hash
+        window.location.hash = '#/' + id;
+      });
+    }
+  },
 
-    initCart: function(){
-      const thisApp = this;
+  activatePage: function (pageId) {
+    const thisApp = this;
 
-      const cartElem = document.querySelector(select.containerOf.cart);
-      thisApp.cart = new Cart(cartElem);      //instancja klasy Cart
+    // add class "active" to maching pages, remove from non-matching
 
-      thisApp.productList = document.querySelector(select.containerOf.menu);
+    for (let page of thisApp.pages) {
+      page.classList.toggle(classNames.pages.active, page.id == pageId);
+    }
 
-      thisApp.productList.addEventListener('add-to-cart', function(event){      //kiedy mamy już listę produktów (productList), możemy dodać event, który jest customowy, jego hanlderem jest anonimowa funkcja przyjmująca event, który wykorzystamy aby koszykowi przekazać info jaki produkt został do niego dodany
-        app.cart.add(event.detail.product);                                     //event (przekazuje info jaki produkt został dodany) posiada obiekt detail w którym znajduje się product (detail jest wbudowane) -> detail.product pochodzi z Product.js
+    // add class "active" to maching links, remove from non-matching
+    for (let link of thisApp.navLinks) {
+      link.classList.toggle(
+        classNames.nav.active,
+        link.getAttribute('href') == '#' + pageId
+      );
+    }
+  },
+  initHome: function () {
+    const thisApp = this;
+
+    const element = document.querySelector(select.containerOf.home);
+    thisApp.Home = new Home(element);
+  },
+
+  initMenu: function () {
+    const thisApp = this;
+
+    for (let productData in thisApp.data.products) {
+      new Product(
+        thisApp.data.products[productData].id,
+        thisApp.data.products[productData]
+      );
+    }
+  },
+
+  initData: function () {
+    const thisApp = this;
+
+    thisApp.data = {};
+    const url = settings.db.url + '/' + settings.db.product;
+
+    fetch(url)
+      .then(function (rawResponse) {
+        return rawResponse.json();
       })
-    },
- 
-    init: function(){                         //to jest metoda: app.init
-      const thisApp = this;
-      console.log('*** App starting ***');
-      console.log('thisApp:', thisApp);
-      console.log('classNames:', classNames);
-      console.log('settings:', settings);
-      console.log('templates:', templates);
- 
-      thisApp.initData();                    //wywołanie metody initData
-      thisApp.initMenu();                    //wywołanie metody initMenu
-      thisApp.initCart();
-    },
-  };
- 
-  app.init();
+      .then(function (parsedResponse) {
+        //save parsedResponse as this.App.data.products
+        thisApp.data.products = parsedResponse;
+
+        //execute initMenu method
+        thisApp.initMenu();
+      });
+  },
+
+  initCart: function () {
+    const thisApp = this;
+
+    const cartElem = document.querySelector(select.containerOf.cart);
+    thisApp.cart = new Cart(cartElem);
+
+    thisApp.productList = document.querySelector(select.containerOf.menu);
+
+    thisApp.productList.addEventListener('add-to-cart', function (event) {
+      app.cart.add(event.detail.product);
+    });
+  },
+  initBooking: function () {
+    const thisApp = this;
+
+    const element = document.querySelector(select.containerOf.booking);
+    thisApp.Booking = new Booking(element);
+  },
+  init: function () {
+    const thisApp = this;
+    thisApp.initPages();
+    thisApp.initData();
+    thisApp.initCart();
+    thisApp.initBooking();
+    thisApp.initHome();
+  },
+};
+
+app.init();
