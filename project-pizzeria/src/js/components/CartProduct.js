@@ -56,7 +56,7 @@ class CartProduct {
     const thisCartProduct = this;
     thisCartProduct.dom.edit.addEventListener('click', function (event) {
       event.preventDefault();
-     //console.log('edit clicked');
+      //console.log('edit clicked');
     });
     thisCartProduct.dom.remove.addEventListener('click', function (event) {
       event.preventDefault();
