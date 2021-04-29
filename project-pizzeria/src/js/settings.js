@@ -1,8 +1,8 @@
 /* global Handlebars */
 
-export const select = {
-  templateOf: {
-    menuProduct: '#template-menu-product',
+export const select = {                           //obiekt
+  templateOf: {                                   //drugi obiekt
+    menuProduct: '#template-menu-product',        //właściwość i selektor
     cartProduct: '#template-cart-product',
     bookingWidget: '#template-booking-widget',
     homePage: '#template-home-page',
@@ -17,7 +17,7 @@ export const select = {
   all: {
     menuProducts: '#product-list > .product',
     menuProductsActive: '#product-list > .product.active',
-    formInputs: 'input, select',
+    formInputs: 'input, select',      //zmiana select na option
   },
   menuProduct: {
     clickable: '.product__header',

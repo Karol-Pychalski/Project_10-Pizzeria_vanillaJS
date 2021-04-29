@@ -36,12 +36,9 @@ class Booking {
 
 
     const urls = {
-      booking:       settings.db.url  + '/' + settings.db.booking
-                                      + '?' + params.booking.join('&'),
-      eventsCurrent: settings.db.url  + '/' + settings.db.event
-                                      + '?' + params.eventsCurrent.join('&'),
-      eventsRepeat:   settings.db.url + '/' + settings.db.event
-                                      + '?' + params.eventsRepeat.join('&'),
+      booking:       settings.db.url  + '/' + settings.db.booking + '?' + params.booking.join('&'),
+      eventsCurrent: settings.db.url  + '/' + settings.db.event + '?' + params.eventsCurrent.join('&'),
+      eventsRepeat:   settings.db.url + '/' + settings.db.event + '?' + params.eventsRepeat.join('&'),
     };
 
     Promise.all([
@@ -61,6 +58,7 @@ class Booking {
       })
       .then(function([bookings, eventsCurrent, eventsRepeat]){
         thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
+        //console.log('bookings, eventsCurrent, eventsRepeat:', bookings, eventsCurrent, eventsRepeat);
       });
   }
 

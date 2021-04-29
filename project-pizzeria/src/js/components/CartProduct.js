@@ -10,17 +10,17 @@ class CartProduct {
     thisCartProduct.priceSingle = menuProduct.priceSingle;
     thisCartProduct.price = menuProduct.price;
     thisCartProduct.params = menuProduct.params;
-    thisCartProduct.getElements(element);
-    thisCartProduct.initAmountWidget();
+
+    thisCartProduct.getElements(element);   //tu konstruktor wynokuje metodę getElements przekazując jej argument element
+    thisCartProduct.initAmountWidget();     //tu konstruktor uruchamia metodę initAmountWidget
     thisCartProduct.initActions();
   }
 
   getElements(element) {
     const thisCartProduct = this;
 
-
     thisCartProduct.dom = {};
-    thisCartProduct.dom.wrapper = element;
+    thisCartProduct.dom.wrapper = element;    //właściwość thisCardProduct.dom.wrapper z przypisanym argumentem element (referencja do oryginalnego elementu DOM)
     thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
     thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.price);
     thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
@@ -49,13 +49,14 @@ class CartProduct {
       },
     });
     thisCartProduct.dom.wrapper.dispatchEvent(event);
-    console.log('usuwanie produktu......');
+    //console.log('remove:');
   }
 
   initActions() {
     const thisCartProduct = this;
     thisCartProduct.dom.edit.addEventListener('click', function (event) {
       event.preventDefault();
+     //console.log('edit clicked');
     });
     thisCartProduct.dom.remove.addEventListener('click', function (event) {
       event.preventDefault();
@@ -76,7 +77,6 @@ class CartProduct {
     };
     return orderData;
   }
-
 }
 
 export default CartProduct;

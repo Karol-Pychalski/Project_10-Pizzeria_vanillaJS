@@ -2,17 +2,18 @@ import {settings, select} from '../settings.js';
 import BaseWidget from './BaseWidget.js';
 
 class AmountWidget extends BaseWidget {
-  constructor(element) {
+  constructor(element){
     super(element, settings.amountWidget.defaultValue);
 
     const thisWidget = this;
 
     thisWidget.getElements(element);
+    //console.log('getElements:', element);
 
     thisWidget.initActions();
   }
 
-  getElements() {
+  getElements(){
     const thisWidget = this;
 
     thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
@@ -30,25 +31,25 @@ class AmountWidget extends BaseWidget {
     const thisWidget = this;
 
     thisWidget.dom.input.value = thisWidget.value;
-
   }
+  
 
-  initActions() {
+  initActions(){
     const thisWidget = this;
-    // console.log('initActions', thisWidget.dom.linkIncrease);
 
     thisWidget.dom.input.addEventListener('change', function () {
-      // thisWidget.setValue(thisWidget.dom.input.value);
       thisWidget.value = thisWidget.dom.input.value;
     });
 
     thisWidget.dom.linkDecrease.addEventListener('click', function (event) {
       event.preventDefault();
       thisWidget.setValue(thisWidget.value - 1);
+      //thisWidget.value = thisWidget.value -1;
     });
     thisWidget.dom.linkIncrease.addEventListener('click', function (event) {
       event.preventDefault();
       thisWidget.setValue(thisWidget.value + 1);
+      //thisWidget.value = thisWidget.value +1;
     });
   }
 

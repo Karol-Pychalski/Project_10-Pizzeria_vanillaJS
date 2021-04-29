@@ -8,7 +8,7 @@ const app = {
   initPages: function () {
     const thisApp = this;
 
-    thisApp.pages = document.querySelector(select.containerOf.pages).children;
+    thisApp.pages = document.querySelector(select.containerOf.pages).children;  //przechowywane są kontenery podstron, które musimy wyszukać w DOM
     thisApp.navLinks = document.querySelectorAll(select.nav.links);
 
     const idFromHash = window.location.hash.replace('#/', '');
@@ -17,7 +17,7 @@ const app = {
     for (let page of thisApp.pages) {
       if (page.id == idFromHash) {
         pageMatchingHash = page.id;
-        break;
+        break;    //jeśli pierwsza znaleziona strona ma id pasujące do #, to pętla kończy działanie
       }
     }
 
@@ -28,6 +28,7 @@ const app = {
         const clickedElement = this;
         event.preventDefault();
 
+        /* get page id from href attribute */
         const id = clickedElement.getAttribute('href').replace('#', '');
 
         //run thisApp.activatedPage with that id
@@ -50,10 +51,7 @@ const app = {
 
     // add class "active" to maching links, remove from non-matching
     for (let link of thisApp.navLinks) {
-      link.classList.toggle(
-        classNames.nav.active,
-        link.getAttribute('href') == '#' + pageId
-      );
+      link.classList.toggle(classNames.nav.active,link.getAttribute('href') == '#' + pageId);
     }
   },
   initHome: function () {
@@ -63,21 +61,17 @@ const app = {
     thisApp.Home = new Home(element);
   },
 
-  initMenu: function () {
-    const thisApp = this;
+  initMenu: function () {       //metoda app.initMenu wywoływana po app.initData (korzysta z przygotowanej wcześniej referencji do danych -> thisApp.data)
+    const thisApp = this;       //zadanie tej metody: przejście po wszystkich obiektach produktów i utworzenie dla każdego z nich instancji klasy Product [s.41]
 
-    for (let productData in thisApp.data.products) {
-      new Product(
-        thisApp.data.products[productData].id,
-        thisApp.data.products[productData]
-      );
+    for (let productData in thisApp.data.products) {    //pętla wykonuje wszystkie akcje z getEleent dla każdego produktu z menu (powtarza to wszystko dla każdego produktu)
+      new Product(thisApp.data.products[productData].id,thisApp.data.products[productData]);
     }
   },
 
-  initData: function () {
+  initData: function () {      //metoda app.initData (zadanie: przygotowanie łatwego dostępu do danych [s.41]
     const thisApp = this;
-
-    thisApp.data = {};
+    thisApp.data = {};         //było = dataSource; przypisanie referencji do dataSource (znajduje się tam obiekt Products ze strukturą produktów)
     const url = settings.db.url + '/' + settings.db.product;
 
     fetch(url)
@@ -97,12 +91,12 @@ const app = {
     const thisApp = this;
 
     const cartElem = document.querySelector(select.containerOf.cart);
-    thisApp.cart = new Cart(cartElem);
+    thisApp.cart = new Cart(cartElem);        //instancja klasy Cart
 
     thisApp.productList = document.querySelector(select.containerOf.menu);
 
-    thisApp.productList.addEventListener('add-to-cart', function (event) {
-      app.cart.add(event.detail.product);
+    thisApp.productList.addEventListener('add-to-cart', function (event) {      //kiedy mamy już listę produktów (productList), możemy dodać event, który jest customowy, jego hanlderem jest anonimowa funkcja przyjmująca event, który wykorzystamy aby koszykowi przekazać info jaki produkt został do niego dodany
+      app.cart.add(event.detail.product);                                       //event (przekazuje info jaki produkt został dodany) posiada obiekt detail w którym znajduje się product (detail jest wbudowane) -> detail.product pochodzi z Product.js
     });
   },
   initBooking: function () {

@@ -6,17 +6,14 @@ class Cart {
   constructor(element) {
     const thisCart = this;
 
-    thisCart.products = [];
-
+    thisCart.products = [];         //tu będą przechowywane produkty dodane do koszyka
     thisCart.getElements(element);
     thisCart.initActions();
   }
 
   getElements(element) {
     const thisCart = this;
-
     thisCart.dom = {};
-
     thisCart.dom.wrapper = element;
 
     thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
@@ -34,14 +31,14 @@ class Cart {
     const thisCart = this;
     thisCart.dom.toggleTrigger.addEventListener('click', function (event) {
       event.preventDefault();
-      thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);   //hanlder tego listenera toggluje klasę zapisaną w classNames.cart.wrapperActive
     });
-    thisCart.dom.productList.addEventListener('updated', function () {
+    thisCart.dom.productList.addEventListener('updated', function () {        //dzięki własciwości bubbles event powstanie na tej liście
       thisCart.update();
     });
-    thisCart.dom.productList.addEventListener('remove', function (event) {
+    thisCart.dom.productList.addEventListener('remove', function (event) {    //8.6: Zadanie: wychwycenie eventu
       event.preventDefault();
-      thisCart.remove(event.detail.cartProduct);
+      thisCart.remove(event.detail.cartProduct);                              //handler eventu - wywołuje metodę thisCart.remove z argumentem o wartości event.detail.cartProduct
     });
     thisCart.dom.form.addEventListener('submit', function (event) {
       event.preventDefault();
@@ -65,6 +62,7 @@ class Cart {
 
     thisCart.dom.productList.appendChild(generatedDom);
     thisCart.products.push(new CartProduct(menuProduct, generatedDom));
+    //console.log('thisCart.products.push', thisCart.products); ??
     thisCart.update();
   }
 
