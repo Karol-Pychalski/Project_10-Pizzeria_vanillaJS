@@ -1,1 +1,3 @@
-https://fast-cliffs-08532.herokuapp.com/
+https://pizzeriadolcevita.herokuapp.com/
+
+1. Use 'npm start' to run the project.
